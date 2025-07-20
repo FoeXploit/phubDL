@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal yt-dlp Command Generator - Enhanced</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Custom font for a modern look */
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #0a0a0a; /* Deep black background */
+            color: #f0f0f0; /* Light text for contrast */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top to handle longer content */
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #1a1a1a; /* Slightly lighter black for the container */
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); /* Deeper shadow for depth */
+            padding: 2.5rem; /* Increased padding */
+            width: 100%;
+            max-width: 800px; /* Wider container for more options */
+            text-align: center;
+            border: 1px solid #333333; /* Subtle dark border */
+        }
+        input[type="text"], select, textarea {
+            background-color: #2a2a2a; /* Darker input fields */
+            color: #f0f0f0;
+            border: 1px solid #4a4a4a;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="text"]:focus, select:focus, textarea:focus {
+            border-color: #ff8c00; /* Orange focus border */
+            box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.3);
+            outline: none;
+        }
+        input[type="checkbox"] {
+            margin-right: 0.5rem;
+            width: 1.25rem; /* Larger checkbox */
+            height: 1.25rem;
+            accent-color: #ff8c00; /* Orange checkbox */
+        }
+        button {
+            background-image: linear-gradient(to right, #ff8c00, #ff6347); /* Orange-red gradient button */
+            color: white;
+            padding: 0.85rem 1.8rem; /* Larger padding */
+            border-radius: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Button shadow */
+            border: none;
+            margin-top: 0.75rem; /* Increased margin */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.05em; /* Slight letter spacing */
+        }
+        button:hover {
+            background-image: linear-gradient(to right, #ff6347, #e0503a); /* Darker gradient on hover */
+            transform: translateY(-3px); /* More pronounced lift effect */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+        }
+        button:disabled {
+            background-image: linear-gradient(to right, #4a4a4a, #333333);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .copy-button {
+            background-image: linear-gradient(to right, #4CAF50, #388E3C); /* Green gradient for copy button */
+        }
+        .copy-button:hover {
+            background-image: linear-gradient(to right, #388E3C, #2E7D32);
+        }
+        .settings-button {
+            background-image: linear-gradient(to right, #1e90ff, #1c86ee); /* Blue for settings */
+            margin-right: 0.5rem;
+        }
+        .settings-button:hover {
+             background-image: linear-gradient(to right, #1c86ee, #187bcd);
+        }
+        .clear-settings-button {
+             background-image: linear-gradient(to right, #6c757d, #5a6268); /* Gray for clear */
+        }
+        .clear-settings-button:hover {
+             background-image: linear-gradient(to right, #5a6268, #4e555b);
+        }
+        .message-box {
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1.5rem; /* Increased margin */
+            text-align: center;
+            font-size: 0.95rem; /* Slightly larger font */
+            line-height: 1.5;
+            font-weight: 500;
+        }
+        .message-box.info { background-color: #2a2a40; border: 1px solid #6a5acd; color: #b0c4de; }
+        .message-box.error { background-color: #402a2a; border: 1px solid #dc143c; color: #ffb6c1; }
+        .message-box.success { background-color: #2a402a; border: 1px solid #3cb371; color: #98fb98; }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: #ff8c00;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+        }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 2rem;
+            margin-bottom: 1.2rem;
+            color: #ffa500;
+        }
+        pre {
+            background-color: #222222;
+            padding: 1.2rem;
+            border-radius: 0.6rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            color: #ffd700;
+            margin-top: 1.2rem;
+            max-height: 250px;
+            resize: vertical;
+            border: 1px dashed #444444;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f0f0f0;
+            margin-bottom: 0.6rem;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-left: 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        a {
+            color: #ff8c00;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+        a:hover {
+            color: #ffa500;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Universal yt-dlp Command Generator</h1>
+        <p class="mb-8 text-lg text-gray-300">Enter any video URL and configure advanced options to generate a precise <code>yt-dlp</code> command.</p>
+
+        <!-- Main Form -->
+        <div class="form-group">
+            <label for="videoUrl">Video or Playlist URL:</label>
+            <input type="text" id="videoUrl" autofocus placeholder="e.g., https://www.youtube.com/watch?v=..." class="w-full">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-group">
+                <label for="qualitySelect">Select Quality:</label>
+                <select id="qualitySelect" class="w-full">
+                    <option value="best">Best Available (Default)</option>
+                    <option value="best_mp4">Best Available (Prefer MP4)</option>
+                    <option value="best_webm">Best Available (Prefer WEBM)</option>
+                    <option value="1080p">1080p (if available)</option>
+                    <option value="720p">720p (if available)</option>
+                    <option value="480p">480p (if available)</option>
+                    <option value="audio_only">Audio Only (MP3)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="rateLimit">Download Speed Limit (Optional):</label>
+                <input type="text" id="rateLimit" placeholder="e.g., 500K or 2.5M">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="downloadDir">Download Directory (Optional):</label>
+            <input type="text" id="downloadDir" placeholder="e.g., C:/Users/YourName/Downloads or ~/Downloads/Videos">
+        </div>
+
+        <div class="form-group">
+            <label for="filenameTemplate">Output Filename Template (Optional):</label>
+            <input type="text" id="filenameTemplate" placeholder="Default: %(title)s [%(id)s].%(ext)s">
+        </div>
+
+        <div class="form-group">
+            <label for="archiveFile">Download Archive File (Optional):</label>
+            <input type="text" id="archiveFile" placeholder="e.g., C:/path/to/archive.txt (prevents re-downloads)">
+        </div>
+
+        <div class="form-group">
+            <label for="proxyServer">Proxy Server (Optional):</label>
+            <input type="text" id="proxyServer" placeholder="e.g., socks5://127.0.0.1:9050">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="embedSubs">
+                <label for="embedSubs" class="inline-block mb-0 ml-2">Embed available subtitles</label>
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="forceOverwrite">
+                <label for="forceOverwrite" class="inline-block mb-0 ml-2">Force overwrite existing files</label>
+            </div>
+        </div>
+
+        <button id="generateCommandBtn" class="w-full md:w-auto">
+            Generate Command
+            <span id="generateSpinner" class="spinner hidden"></span>
+        </button>
+
+        <!-- Output Area -->
+        <div id="outputArea" class="hidden mt-8">
+            <h2>Generated Command:</h2>
+            <pre id="commandOutput" class="text-left"></pre>
+            <button id="copyCommandBtn" class="copy-button w-full md:w-auto">
+                Copy Command
+                <span id="copySpinner" class="spinner hidden"></span>
+            </button>
+        </div>
+
+        <div id="messageBox" class="message-box hidden"></div>
+        
+        <!-- Settings Management -->
+        <h2 class="mt-10">Settings Management</h2>
+        <div class="flex justify-center items-center gap-4">
+            <button id="saveSettingsBtn" class="settings-button w-full md:w-auto">Save My Settings</button>
+            <button id="clearSettingsBtn" class="clear-settings-button w-full md:w-auto">Clear Saved Settings</button>
+        </div>
+
+        <!-- Instructions -->
+        <h2 class="mt-10">Instructions:</h2>
+        <div class="text-left text-gray-300 text-base">
+            <p>This tool generates a command for <code>yt-dlp</code>, a versatile command-line video downloader. To use the generated command, you need to have <code>yt-dlp</code> and FFmpeg installed on your system.</p>
+            <ol class="list-decimal list-inside space-y-2 mt-4">
+                <li><strong>Install Python:</strong> Download from <a href="https://www.python.org/downloads/" target="_blank">python.org</a>. Check "Add Python to PATH" during installation.</li>
+                <li><strong>Install yt-dlp:</strong> Open your terminal (Command Prompt, PowerShell, or Terminal) and run: <pre class="inline-block p-2 my-1"><code>pip install -U yt-dlp</code></pre></li>
+                <li><strong>Install FFmpeg:</strong> Download from <a href="https://ffmpeg.org/download.html" target="_blank">ffmpeg.org</a> and add it to your system's PATH. This is crucial for merging formats and converting audio.</li>
+                <li><strong>Use the Command:</strong> Copy the generated command, paste it into your terminal, and press Enter.</li>
+            </ol>
+            <p class="mt-6"><strong>Note on Authentication:</strong> For private or members-only content, you may need to pass cookies to `yt-dlp`. This tool does not handle credentials. Refer to the official `yt-dlp` <a href="https://github.com/yt-dlp/yt-dlp#authentication" target="_blank">documentation</a> for secure methods like <code>--cookies-from-browser BROWSER</code>.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Element References
+            const videoUrlInput = document.getElementById('videoUrl');
+            const qualitySelect = document.getElementById('qualitySelect');
+            const downloadDirInput = document.getElementById('downloadDir');
+            const filenameTemplateInput = document.getElementById('filenameTemplate');
+            const proxyServerInput = document.getElementById('proxyServer');
+            const rateLimitInput = document.getElementById('rateLimit');
+            const archiveFileInput = document.getElementById('archiveFile');
+            const embedSubsCheckbox = document.getElementById('embedSubs');
+            const forceOverwriteCheckbox = document.getElementById('forceOverwrite');
+            const generateCommandBtn = document.getElementById('generateCommandBtn');
+            const generateSpinner = document.getElementById('generateSpinner');
+            const outputArea = document.getElementById('outputArea');
+            const commandOutput = document.getElementById('commandOutput');
+            const copyCommandBtn = document.getElementById('copyCommandBtn');
+            const copySpinner = document.getElementById('copySpinner');
+            const messageBox = document.getElementById('messageBox');
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            const clearSettingsBtn = document.getElementById('clearSettingsBtn');
+
+            const settingsToSave = {
+                'yt-dlp-url': videoUrlInput,
+                'yt-dlp-quality': qualitySelect,
+                'yt-dlp-dir': downloadDirInput,
+                'yt-dlp-filename': filenameTemplateInput,
+                'yt-dlp-proxy': proxyServerInput,
+                'yt-dlp-rateLimit': rateLimitInput,
+                'yt-dlp-archive': archiveFileInput,
+                'yt-dlp-embedSubs': embedSubsCheckbox,
+                'yt-dlp-overwrite': forceOverwriteCheckbox
+            };
+
+            // --- Functions for User Feedback ---
+            function showMessage(message, type = 'info', duration = 4000) {
+                messageBox.textContent = message;
+                messageBox.className = 'message-box'; // Reset class
+                messageBox.classList.add(type);
+                messageBox.classList.remove('hidden');
+                setTimeout(() => messageBox.classList.add('hidden'), duration);
+            }
+
+            // --- Functions for Settings Management ---
+            function saveSettings() {
+                try {
+                    Object.entries(settingsToSave).forEach(([key, element]) => {
+                        const value = (element.type === 'checkbox') ? element.checked : element.value;
+                        localStorage.setItem(key, value);
+                    });
+                    showMessage("Settings saved successfully!", 'success');
+                } catch (e) {
+                    console.error("Failed to save settings:", e);
+                    showMessage("Could not save settings. Local storage might be disabled or full.", 'error');
+                }
+            }
+
+            function loadSettings() {
+                try {
+                    Object.entries(settingsToSave).forEach(([key, element]) => {
+                        const savedValue = localStorage.getItem(key);
+                        if (savedValue !== null) {
+                            if (element.type === 'checkbox') {
+                                element.checked = (savedValue === 'true');
+                            } else {
+                                element.value = savedValue;
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.error("Failed to load settings:", e);
+                }
+            }
+
+            function clearSettings() {
+                try {
+                    Object.keys(settingsToSave).forEach(key => {
+                        localStorage.removeItem(key);
+                    });
+                    // Reset form to default state
+                    videoUrlInput.value = '';
+                    qualitySelect.value = 'best';
+                    downloadDirInput.value = '';
+                    filenameTemplateInput.value = '';
+                    proxyServerInput.value = '';
+                    rateLimitInput.value = '';
+                    archiveFileInput.value = '';
+                    embedSubsCheckbox.checked = false;
+                    forceOverwriteCheckbox.checked = false;
+                    showMessage("Saved settings have been cleared.", 'info');
+                } catch(e) {
+                    console.error("Failed to clear settings:", e);
+                    showMessage("Could not clear settings.", 'error');
+                }
+            }
+
+            // --- Core Command Generation Logic ---
+            function generateCommand() {
+                generateSpinner.classList.remove('hidden');
+                generateCommandBtn.disabled = true;
+                outputArea.classList.add('hidden');
+
+                const url = videoUrlInput.value.trim();
+                if (!url) {
+                    showMessage("Please enter a video or playlist URL.", 'error');
+                    generateSpinner.classList.add('hidden');
+                    generateCommandBtn.disabled = false;
+                    return;
+                }
+
+                let commandParts = [`yt-dlp`];
+
+                // Add options
+                const quality = qualitySelect.value;
+                const downloadDir = downloadDirInput.value.trim();
+                const filenameTemplate = filenameTemplateInput.value.trim();
+                const proxyServer = proxyServerInput.value.trim();
+                const rateLimit = rateLimitInput.value.trim();
+                const archiveFile = archiveFileInput.value.trim();
+                const embedSubs = embedSubsCheckbox.checked;
+                const forceOverwrite = forceOverwriteCheckbox.checked;
+
+                // Quality
+                switch (quality) {
+                    case '1080p': commandParts.push(`-f "bestvideo[height<=1080]+bestaudio/best[height<=1080]"`); break;
+                    case '720p': commandParts.push(`-f "bestvideo[height<=720]+bestaudio/best[height<=720]"`); break;
+                    case '480p': commandParts.push(`-f "bestvideo[height<=480]+bestaudio/best[height<=480]"`); break;
+                    case 'audio_only': commandParts.push(`-x --audio-format mp3`); break;
+                    case 'best_mp4': commandParts.push(`-f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"`); break;
+                    case 'best_webm': commandParts.push(`-f "bestvideo[ext=webm]+bestaudio[ext=webm]/best[ext=webm]/best"`); break;
+                }
+
+                // Output Path and Template
+                let outputParts = [];
+                if (downloadDir) outputParts.push(downloadDir.replace(/\\/g, '/'));
+                if (filenameTemplate) outputParts.push(filenameTemplate);
+                else if (downloadDir) outputParts.push('%(title)s [%(id)s].%(ext)s'); // Add default if dir is set but template isn't
+
+                if (outputParts.length > 0) {
+                    commandParts.push(`-o "${outputParts.join('/')}"`);
+                } else if (filenameTemplate) {
+                     commandParts.push(`-o "${filenameTemplate}"`);
+                }
+
+                // Other options
+                if (proxyServer) commandParts.push(`--proxy "${proxyServer}"`);
+                if (rateLimit) commandParts.push(`--limit-rate ${rateLimit}`);
+                if (archiveFile) commandParts.push(`--download-archive "${archiveFile.replace(/\\/g, '/')}"`);
+                if (embedSubs) commandParts.push(`--embed-subs`);
+                if (forceOverwrite) commandParts.push(`--force-overwrites`);
+
+                // URL must be last
+                commandParts.push(`"${url}"`);
+
+                commandOutput.textContent = commandParts.join(' ');
+                outputArea.classList.remove('hidden');
+
+                generateSpinner.classList.add('hidden');
+                generateCommandBtn.disabled = false;
+            }
+
+            // --- Clipboard Logic ---
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showMessage("Command copied to clipboard!", 'success');
+                } catch (err) {
+                    showMessage("Failed to copy command. Please copy manually.", 'error');
+                    console.error('Fallback copy failed:', err);
+                } finally {
+                    document.body.removeChild(textarea);
+                }
+            }
+
+            function copyCommand() {
+                const commandText = commandOutput.textContent;
+                if (!commandText) {
+                    showMessage("No command to copy.", 'info');
+                    return;
+                }
+
+                copySpinner.classList.remove('hidden');
+                copyCommandBtn.disabled = true;
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(commandText).then(() => {
+                        showMessage("Command copied to clipboard!", 'success');
+                    }).catch(err => {
+                        console.error('Clipboard API failed:', err);
+                        fallbackCopy(commandText);
+                    }).finally(() => {
+                        copySpinner.classList.add('hidden');
+                        copyCommandBtn.disabled = false;
+                    });
+                } else {
+                    fallbackCopy(commandText);
+                    copySpinner.classList.add('hidden');
+                    copyCommandBtn.disabled = false;
+                }
+            }
+
+            // --- Event Listeners ---
+            generateCommandBtn.addEventListener('click', generateCommand);
+            copyCommandBtn.addEventListener('click', copyCommand);
+            saveSettingsBtn.addEventListener('click', saveSettings);
+            clearSettingsBtn.addEventListener('click', clearSettings);
+
+            // --- Initial Load ---
+            loadSettings();
+        });
+    </script>
+</body>
+</html>
